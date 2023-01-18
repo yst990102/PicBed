@@ -1,0 +1,34 @@
+version: "3"
+name: VanBlog
+services:
+  vanblog:
+    image: mereith/van-blog:latest
+    container_name: vanblog
+    restart: always
+    environment:
+      TZ: "Asia/Shanghai"
+      # 邮箱地址，用于自动申请 https 证书
+      EMAIL: "1093170697@qq.com"
+    volumes:
+      # 图床文件的存放地址，按需修改。
+      - /share/CACHEDEV1_DATA/VanBlog/vanblog/data/static:/app/static
+      # 日志文件
+      - /share/CACHEDEV1_DATA/VanBlog/vanblog/log:/var/log
+      # caddy 配置存储
+      - /share/CACHEDEV1_DATA/VanBlog/vanblog/caddy/config:/root/.config/caddy
+      # caddy 证书存储
+      - /share/CACHEDEV1_DATA/VanBlog/vanblog/caddy/data:/root/.local/share/caddy
+    ports:
+      # 前面的是映射到宿主机的端口号，改端口的话改前面的。
+      - 10001:80
+      - 10002:443
+  mongo:
+    # 某些机器不支持 avx 会报错，所以默认用 v4 版本。有的话用最新的。
+    image: mongo:4.4.16
+    container_name: mongo
+    restart: always
+    environment:
+      TZ: "Asia/Shanghai"
+    volumes:
+      - /share/CACHEDEV1_DATA/VanBlog/mongo/db:/data/db
+      - /share/CACHEDEV1_DATA/VanBlog/mongo/configdb:/data/configdb
